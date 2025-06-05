@@ -62,17 +62,6 @@ const ParcelleForm = ({ onSave, onCancel, existingParcelle }: ParcelleFormProps)
       // Prepare the data
       const parcelleData = {
         ...data,
-        geom_coordonnee: {
-          type: 'Polygon',
-          coordinates: [[
-            // Example polygon - this should be replaced with actual coordinates from a map interface
-            [2.3522, 48.8566],
-            [2.3622, 48.8566],
-            [2.3622, 48.8666],
-            [2.3522, 48.8666],
-            [2.3522, 48.8566]
-          ]]
-        }
       };
       
       let result;
@@ -216,8 +205,10 @@ const ParcelleForm = ({ onSave, onCancel, existingParcelle }: ParcelleFormProps)
                       <EditControl
                         position="topright"
                         onCreated={(e) => {
+                          console.log('Polygon created:', e);
                           const layer = e.layer;
                           const coordinates = layer.getLatLngs()[0].map((latlng: any) => [latlng.lng, latlng.lat]);
+                          console.log('Coordinates:', coordinates);
                           setValue('geom_coordonnee', {
                             type: 'Polygon',
                             coordinates: [coordinates]
