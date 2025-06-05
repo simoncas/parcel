@@ -205,10 +205,8 @@ const ParcelleForm = ({ onSave, onCancel, existingParcelle }: ParcelleFormProps)
                       <EditControl
                         position="topright"
                         onCreated={(e) => {
-                          console.log('Polygon created:', e);
                           const layer = e.layer;
                           const coordinates = layer.getLatLngs()[0].map((latlng: any) => [latlng.lng, latlng.lat]);
-                          console.log('Coordinates:', coordinates);
                           setValue('geom_coordonnee', {
                             type: 'Polygon',
                             coordinates: [coordinates]
