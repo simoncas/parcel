@@ -8,6 +8,8 @@ import Input from '../ui/Input';
 import Select from '../ui/Select';
 import { supabase } from '../../lib/supabase';
 import { Parcelle } from '../../types/models';
+import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
+import { EditControl } from "react-leaflet-draw"
 
 interface ParcelleFormProps {
   onSave: (parcelle: Parcelle) => void;
@@ -18,7 +20,7 @@ interface ParcelleFormProps {
 const ParcelleForm = ({ onSave, onCancel, existingParcelle }: ParcelleFormProps) => {
   const [loading, setLoading] = useState(false);
   
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, setValue, handleSubmit, formState: { errors } } = useForm({
     defaultValues: existingParcelle || {
       code: '',
       nom: '',
@@ -200,8 +202,37 @@ const ParcelleForm = ({ onSave, onCancel, existingParcelle }: ParcelleFormProps)
             <p className="text-sm text-gray-500 mb-4">
               Utilisez la carte pour définir les limites de la parcelle. Cliquez pour ajouter des points et former un polygone.
             </p>
-            <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-              <p className="text-gray-500">Carte interactive à implémenter</p>
+            <div className="h-[600px] bg-gray-100 rounded-lg flex items-center justify-center">
+                  <MapContainer 
+                    center={[46.644809284551314, 6.911119172482963]} 
+                    zoom={14} 
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    <FeatureGroup>
+                      <EditControl
+                        position="topright"
+                        onCreated={(e) => {
+                          const layer = e.layer;
+                          const coordinates = layer.getLatLngs()[0].map((latlng: any) => [latlng.lng, latlng.lat]);
+                          setValue('geom_coordonnee', {
+                            type: 'Polygon',
+                            coordinates: [coordinates]
+                          });
+                        }}
+                        draw={{
+                          rectangle: false,
+                          circle: false,
+                          marker: false,
+                          polyline: false,
+                          circlemarker: false
+                        }}
+                      />
+                      </FeatureGroup>
+                  </MapContainer>
             </div>
           </div>
         </CardContent>
